@@ -2,9 +2,10 @@
   "name": "polytone",
   "version": "0.1.0",
   "description": "Manage multiple audio sources",
-  "main": "lib/polytone.js",
+  "main": "index.js",
   "scripts": {
-    "test": "tape tests/*.js"
+    "test": "tape tests/*.js",
+    "prepublish": "npm test && browserify index.js | uglifyjs > dist/polytone.min.js && ls -hall dist"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,9 @@
   "homepage": "https://github.com/danigb/polytone#readme",
   "devDependencies": {
     "tape": "^4.5.1"
+  },
+  "dependencies": {
+    "midimessage": "^1.0.5",
+    "note-parser": "^1.1.0"
   }
 }

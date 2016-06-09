@@ -1,5 +1,5 @@
 /* global AudioContext */
-var polytone = require('../..')
+var polytone = require('..')
 
 function synth (ac) {
   return function (fq, opts) {
