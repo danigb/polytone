@@ -1,0 +1,29 @@
+{
+  "name": "polytone",
+  "version": "0.1.0",
+  "description": "Manage multiple audio sources",
+  "main": "lib/polytone.js",
+  "scripts": {
+    "test": "tape tests/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danigb/polytone.git"
+  },
+  "keywords": [
+    "audio",
+    "polyphony",
+    "buffersource",
+    "oscillator",
+    "manager"
+  ],
+  "author": "danigb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danigb/polytone/issues"
+  },
+  "homepage": "https://github.com/danigb/polytone#readme",
+  "devDependencies": {
+    "tape": "^4.5.1"
+  }
+}
