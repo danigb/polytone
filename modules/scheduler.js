@@ -2,7 +2,7 @@
 
 var isArr = Array.isArray
 var isObj = function (o) { return o && typeof o === 'object' }
-var OPTS = {}
+var EMPTY = {}
 
 module.exports = function (polytone) {
   /**
@@ -36,10 +36,10 @@ module.exports = function (polytone) {
    * @function schedule
    * @memberof polytone
    */
-  polytone.schedule = function (time, events) {
-    var now = polytone.ac.currentTime
-    var when = time < now ? now : time
+  polytone.schedule = function (when, events) {
+    when = Math.max(when || 0, polytone.ac.currentTime)
     polytone.emit('schedule', when, events)
+
     var t, o, note, opts
     return events.map(function (event) {
       if (!event) return null
@@ -54,7 +54,7 @@ module.exports = function (polytone) {
         opts = o
       } else {
         note = o
-        opts = OPTS
+        opts = EMPTY
       }
 
       return polytone.start(note, when + (t || 0), opts)

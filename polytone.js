@@ -1,12 +1,9 @@
+/* global AudioBuffer */
 'use strict'
 
-/**
- * Create a polytone
- * @param {AudioContext} ac
- * @param {Function|Array|Object} sources
- * @param {Object} (Optional) options
- * @return {polytone} A polytone instance
- */
+function isFn (o) { return typeof o === 'function' }
+function isAudioBuffer (o) { return o instanceof AudioBuffer }
+
 function Polytone (ac, sources, options) {
   if (arguments.length === 1) return function (f, o) { return Polytone(ac, f, o) }
   if (!sources) throw Error('You need to specify a source(s)')
@@ -18,6 +15,7 @@ function Polytone (ac, sources, options) {
    * var ac = new AudioContext()
    * var polysynth = polytone(ac, synth)
    * polysynth.connect(ac)
+   * @type {GainNode}
    * @namespace polytone
    */
   var polytone = ac.createGain()
@@ -25,7 +23,7 @@ function Polytone (ac, sources, options) {
   polytone.opts = options || {}
   polytone.gain.value = polytone.opts.gain || 1
 
-  var isSingle = typeof sources === 'function'
+  polytone.synth = createSynth(sources)
 
   /**
    * Creates an audio node for a given instrument or note name
@@ -33,9 +31,7 @@ function Polytone (ac, sources, options) {
    * @memberof polytone
    */
   polytone.createNode = function (name, options) {
-    return isSingle ? sources(ac)(name, options)
-      : sources[name] ? sources[name](ac)(options)
-      : null
+    return polytone.synth(polytone.ac, name, options)
   }
 
   /**
@@ -44,22 +40,67 @@ function Polytone (ac, sources, options) {
    * @memberof polytone
    */
   polytone.names = function () {
-    return isSingle ? [] : Object.keys(sources)
+    return polytone.synth.names ? polytone.synth.names.slice() : []
   }
 
   return polytone
 }
 
-Polytone.use = function (modules) {
-  if (!Array.isArray(modules)) throw Error('Expected an array of modules, but got: ' + modules)
+function createSynth (sources) {
+  if (typeof sources === 'function') return monoSynth(sources)
+  else if (Array.isArray(sources)) return layeredSynth(sources)
+  else return namedSynth(sources)
+}
 
-  return function (ac, sources, options) {
-    var p = Polytone(ac, sources, options)
-    modules.forEach(function (init) {
-      init(p)
-    })
-    return p
+function monoSynth (synth) {
+  return function (ac, name, opts) { return synth(ac)(name, opts) }
+}
+
+function layeredSynth (sources) {
+  return function (name, when, opts) {
+
   }
 }
 
-module.exports = Polytone
+function namedSynth (sources) {
+  var names = Object.keys(sources)
+  var synths = names.reduce(function (synths, key) {
+    var source = sources[key]
+    synths[key] = isFn(source) ? source
+      : isAudioBuffer(source) ? audioBufferSynth(source)
+      : null
+    return synths
+  }, {})
+
+  var synth = function (ac, name, opts) {
+    return synths[name] ? synths[name](ac)(opts) : null
+  }
+  synth.names = names
+  return synth
+}
+
+function audioBufferSynth (buffer) {
+  return function (ac) {
+    return function (options) {
+      var node = ac.createBufferSource()
+      node.buffer = buffer
+      return node
+    }
+  }
+}
+
+// Add a `use` function to `root`. It makes Polytone extensible by plugin modules
+function extensible (root) {
+  root.use = function (modules) {
+    if (!Array.isArray(modules)) throw Error('Expected an array of modules, but got: ' + modules)
+    var constructor = function (ac, sources, options) {
+      return modules.reduce(function (p, module) {
+        return module(p)
+      }, Polytone(ac, sources, options))
+    }
+    return extensible(constructor)
+  }
+  return root
+}
+
+module.exports = extensible(Polytone)

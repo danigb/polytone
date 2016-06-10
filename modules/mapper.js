@@ -4,9 +4,6 @@ var note = require('note-parser')
 var isMidi = function (n) { return n !== null && n !== [] && n >= 0 && n < 129 }
 var toMidi = function (n) { return isMidi(n) ? +n : note.midi(n) }
 
-/**
- * @module mapper
- */
 module.exports = function (player) {
   if (player.sources) {
     var map = player.opts.map

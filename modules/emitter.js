@@ -2,10 +2,6 @@
 module.exports = function (polytone) {
   /**
    * Emits an event. Used mostly by modules.
-   * @param {String} name - the name of the event
-   * @param {Float} when - the audio context time
-   * @param {Object} obj - the event object
-   * @param {Object} extra
    */
   polytone.emit = function (event, when, obj, opts) {
     if (polytone.onevent) polytone.onevent(event, when, obj, opts)

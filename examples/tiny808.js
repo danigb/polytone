@@ -1,5 +1,13 @@
 /* global AudioContext */
-var polytone = require('../..')
+var polytone = require('..')
+var h = require('./support/h')
+
+h(document.body, [
+  h('h1', 'Tiny808'),
+  h('h3', 'A polytone example'),
+  h('p', 'Click to stop. Open the dev console to more information.')
+])
+
 var sources = {
   snare: require('snare'),
   kick: require('kick-eight'),
@@ -28,7 +36,7 @@ console.log(tiny808.names())
 var events = concat([
   pattern('x...x...x...x..x', 'kick', 3),
   pattern('..x...xx..x...xx', 'snare', 3, { gain: 0.2 }),
-  pattern('x...x..xx...xx..', 'hihat', 3, { duration: 0.2 }),
+  pattern('x...x..xx...xx..', 'hihat', 3, { }),
   pattern('..x...x..x.x.x..', 'claves', 3)
 ])
 tiny808.schedule(0, events)

@@ -1,35 +1,3 @@
-## Modules
-
-<dl>
-<dt><a href="#module_mapper">mapper</a></dt>
-<dd></dd>
-<dt><a href="#module_start-stop">start-stop</a></dt>
-<dd></dd>
-</dl>
-
-## Objects
-
-<dl>
-<dt><a href="#polytone">polytone</a> : <code>object</code></dt>
-<dd><p>A polytone itself is an AudioNode (a GainNode)
-You must connect to a destination before use it.</p>
-</dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#Polytone">Polytone(ac, sources, (Optional))</a> ⇒ <code><a href="#polytone">polytone</a></code></dt>
-<dd><p>Create a polytone</p>
-</dd>
-</dl>
-
-<a name="module_mapper"></a>
-
-## mapper
-<a name="module_start-stop"></a>
-
-## start-stop
 <a name="polytone"></a>
 
 ## polytone : <code>object</code>
@@ -47,10 +15,12 @@ polysynth.connect(ac)
 * [polytone](#polytone) : <code>object</code>
     * [.createNode()](#polytone.createNode)
     * [.names()](#polytone.names)
-    * [.emit(name, when, obj, extra)](#polytone.emit)
+    * [.emit()](#polytone.emit)
     * [.on(name, cb)](#polytone.on) ⇒ <code>[polytone](#polytone)</code>
     * [.listenToMidi(input, options)](#polytone.listenToMidi) ⇒ <code>[polytone](#polytone)</code>
     * [.schedule(time, events)](#polytone.schedule) ⇒ <code>Array</code>
+    * [.start()](#polytone.start)
+    * [.stop()](#polytone.stop)
 
 <a name="polytone.createNode"></a>
 
@@ -66,18 +36,10 @@ Returns a list of all instrument or note names, if available.
 **Kind**: static method of <code>[polytone](#polytone)</code>  
 <a name="polytone.emit"></a>
 
-### polytone.emit(name, when, obj, extra)
+### polytone.emit()
 Emits an event. Used mostly by modules.
 
 **Kind**: static method of <code>[polytone](#polytone)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>String</code> | the name of the event |
-| when | <code>Float</code> | the audio context time |
-| obj | <code>Object</code> | the event object |
-| extra | <code>Object</code> |  |
-
 <a name="polytone.on"></a>
 
 ### polytone.on(name, cb) ⇒ <code>[polytone](#polytone)</code>
@@ -127,13 +89,13 @@ window.navigator.requestMIDIAccess().then(function (midiAccess) {
 <a name="polytone.schedule"></a>
 
 ### polytone.schedule(time, events) ⇒ <code>Array</code>
-Schedule a list of events to be played at specific time.
+Schedule a list of events to be started at specific time.
 
 It supports three formats of events for the events list:
 
 - An array with [time, note]
-- An array with [time, object]
-- An object with { time: ?, [name|note|midi|key]: ? }
+- An array with [time, { note: ..., option1: ... }]
+- An object with { time: ..., [name|note|midi|key]: ..., option1: ... }
 
 **Kind**: static method of <code>[polytone](#polytone)</code>  
 **Returns**: <code>Array</code> - an array of ids  
@@ -152,7 +114,7 @@ piano.schedule(0, [ [0, 'C2'], [0.5, 'C3'], [1, 'C4'] ])
 **Example**  
 ```js
 // Event format: an object { time: ?, name: ? }
-var drums = player(ac, ...).connect(ac.destination)
+var drums = polytone(ac, ...).connect(ac.destination)
 drums.schedule(0, [
   { name: 'kick', time: 0 },
   { name: 'snare', time: 0.5 },
@@ -160,17 +122,15 @@ drums.schedule(0, [
   { name: 'snare', time: 1.5 }
 ])
 ```
-<a name="Polytone"></a>
+<a name="polytone.start"></a>
 
-## Polytone(ac, sources, (Optional)) ⇒ <code>[polytone](#polytone)</code>
-Create a polytone
+### polytone.start()
+Start a sound
 
-**Kind**: global function  
-**Returns**: <code>[polytone](#polytone)</code> - A polytone instance  
+**Kind**: static method of <code>[polytone](#polytone)</code>  
+<a name="polytone.stop"></a>
 
-| Param | Type | Description |
-| --- | --- | --- |
-| ac | <code>AudioContext</code> |  |
-| sources | <code>function</code> &#124; <code>Array</code> &#124; <code>Object</code> |  |
-| (Optional) | <code>Object</code> | options |
+### polytone.stop()
+Stops some or all sounds
 
+**Kind**: static method of <code>[polytone](#polytone)</code>  
