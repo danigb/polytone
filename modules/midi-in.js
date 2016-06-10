@@ -1,6 +1,6 @@
 var midimessage = require('midimessage')
 
-module.exports = function (player) {
+module.exports = function (polytone) {
   /**
   * Connect a player to a midi input
   *
@@ -10,7 +10,7 @@ module.exports = function (player) {
   *
   * @param {MIDIInput} input
   * @param {Object} options - (Optional)
-  * @return {SamplePlayer} the player
+  * @return {polytone} chainable
   * @example
   * var piano = player(...)
   * window.navigator.requestMIDIAccess().then(function (midiAccess) {
@@ -18,8 +18,10 @@ module.exports = function (player) {
   *     piano.listenToMidi(midiInput)
   *   })
   * })
+   * @function listenToMidi
+   * @memberof polytone
   */
-  player.listenToMidi = function (input, options) {
+  polytone.listenToMidi = function (input, options) {
     var started = {}
     var opts = options || {}
     var gain = opts.gain || function (vel) { return vel / 127 }
@@ -33,7 +35,7 @@ module.exports = function (player) {
 
       switch (mm.messageType) {
         case 'noteon':
-          started[mm.key] = player.play(mm.key, 0, { gain: gain(mm.velocity) })
+          started[mm.key] = polytone.play(mm.key, 0, { gain: gain(mm.velocity) })
           break
         case 'noteoff':
           if (started[mm.key]) {
@@ -43,7 +45,7 @@ module.exports = function (player) {
           break
       }
     }
-    return player
+    return polytone
   }
-  return player
+  return polytone
 }

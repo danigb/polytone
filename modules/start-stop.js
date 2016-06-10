@@ -1,12 +1,14 @@
+'use strict'
 /**
- * Start-stop module
- *
  * @module start-stop
  */
 module.exports = function (polytone) {
   var tracked = {}
   var nextId = 0
 
+  /**
+   * Start a sound
+   */
   polytone.start = function (name, when, options) {
     var opts = options || {}
     var node = polytone.createNode(name, opts)
@@ -21,6 +23,10 @@ module.exports = function (polytone) {
 
   // super
   var create = polytone.createNode
+
+  /**
+   * Create an audio node for a given note or instrument name
+   */
   polytone.createNode = function (name, opts) {
     var node = create(name, opts)
     node.id = nextId++
@@ -36,6 +42,9 @@ module.exports = function (polytone) {
     return node
   }
 
+  /**
+   * Stops some or all sounds
+   */
   polytone.stop = function (when, ids) {
     ids = ids || Object.keys(tracked)
     var now = polytone.ac.currentTime

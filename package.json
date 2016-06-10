@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "tape tests/*.js",
+    "api": "jsdoc2md polytone.js modules/*.js > API.md",
     "prepublish": "npm test && browserify index.js | uglifyjs > dist/polytone.min.js && ls -hall dist"
   },
   "repository": {

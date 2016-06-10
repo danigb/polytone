@@ -1,8 +1,4 @@
-
-/**
- * @module emitter
- * Emitter module. Adds `emit` and `on` functions
- */
+'use strict'
 module.exports = function (polytone) {
   /**
    * Emits an event. Used mostly by modules.

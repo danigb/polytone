@@ -4,15 +4,15 @@ var isArr = Array.isArray
 var isObj = function (o) { return o && typeof o === 'object' }
 var OPTS = {}
 
-module.exports = function (player) {
+module.exports = function (polytone) {
   /**
-   * Schedule a list of events to be played at specific time.
+   * Schedule a list of events to be started at specific time.
    *
    * It supports three formats of events for the events list:
    *
    * - An array with [time, note]
-   * - An array with [time, object]
-   * - An object with { time: ?, [name|note|midi|key]: ? }
+   * - An array with [time, { note: ..., option1: ... }]
+   * - An object with { time: ..., [name|note|midi|key]: ..., option1: ... }
    *
    * @param {Float} time - an absolute time to start (or AudioContext's
    * currentTime if provided number is 0)
@@ -26,18 +26,20 @@ module.exports = function (player) {
    *
    * @example
    * // Event format: an object { time: ?, name: ? }
-   * var drums = player(ac, ...).connect(ac.destination)
+   * var drums = polytone(ac, ...).connect(ac.destination)
    * drums.schedule(0, [
    *   { name: 'kick', time: 0 },
    *   { name: 'snare', time: 0.5 },
    *   { name: 'kick', time: 1 },
    *   { name: 'snare', time: 1.5 }
    * ])
+   * @function schedule
+   * @memberof polytone
    */
-  player.schedule = function (time, events) {
-    var now = player.ac.currentTime
+  polytone.schedule = function (time, events) {
+    var now = polytone.ac.currentTime
     var when = time < now ? now : time
-    player.emit('schedule', when, events)
+    polytone.emit('schedule', when, events)
     var t, o, note, opts
     return events.map(function (event) {
       if (!event) return null
@@ -55,8 +57,8 @@ module.exports = function (player) {
         opts = OPTS
       }
 
-      return player.start(note, when + (t || 0), opts)
+      return polytone.start(note, when + (t || 0), opts)
     })
   }
-  return player
+  return polytone
 }

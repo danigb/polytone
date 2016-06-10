@@ -1,38 +1,60 @@
 'use strict'
 
-function polytone (ac, sources, options) {
-  if (arguments.length === 1) return function (f, o) { return polytone(ac, f, o) }
+/**
+ * Create a polytone
+ * @param {AudioContext} ac
+ * @param {Function|Array|Object} sources
+ * @param {Object} (Optional) options
+ * @return {polytone} A polytone instance
+ */
+function Polytone (ac, sources, options) {
+  if (arguments.length === 1) return function (f, o) { return Polytone(ac, f, o) }
   if (!sources) throw Error('You need to specify a source(s)')
 
-  // create the nodeput node
-  var node = ac.createGain()
-  node.ac = ac
-  node.opts = options || {}
-  node.gain.value = node.opts.gain || 1
+  /**
+   * A polytone itself is an AudioNode (a GainNode)
+   * You must connect to a destination before use it.
+   * @example
+   * var ac = new AudioContext()
+   * var polysynth = polytone(ac, synth)
+   * polysynth.connect(ac)
+   * @namespace polytone
+   */
+  var polytone = ac.createGain()
+  polytone.ac = ac
+  polytone.opts = options || {}
+  polytone.gain.value = polytone.opts.gain || 1
 
   var isSingle = typeof sources === 'function'
 
-  node.createNode = function (name, options) {
+  /**
+   * Creates an audio node for a given instrument or note name
+   * @function
+   * @memberof polytone
+   */
+  polytone.createNode = function (name, options) {
     return isSingle ? sources(ac)(name, options)
       : sources[name] ? sources[name](ac)(options)
       : null
   }
 
-  node.names = function () {
+  /**
+   * Returns a list of all instrument or note names, if available.
+   * @function
+   * @memberof polytone
+   */
+  polytone.names = function () {
     return isSingle ? [] : Object.keys(sources)
   }
-  node.instrument = function (name) {
-    return function (options) { return node.creataeNode(name, options) }
-  }
 
-  return node
+  return polytone
 }
 
-polytone.use = function (modules) {
+Polytone.use = function (modules) {
   if (!Array.isArray(modules)) throw Error('Expected an array of modules, but got: ' + modules)
 
   return function (ac, sources, options) {
-    var p = polytone(ac, sources, options)
+    var p = Polytone(ac, sources, options)
     modules.forEach(function (init) {
       init(p)
     })
@@ -40,4 +62,4 @@ polytone.use = function (modules) {
   }
 }
 
-module.exports = polytone
+module.exports = Polytone
