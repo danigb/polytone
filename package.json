@@ -1,11 +1,11 @@
 {
   "name": "polytone",
-  "version": "0.1.0",
-  "description": "Manage multiple audio sources",
+  "version": "1.0.0",
+  "description": "Create polyphonic instruments from audio sources",
   "main": "index.js",
   "scripts": {
     "test": "tape tests/*.js",
-    "api": "jsdoc2md polytone.js modules/*.js > API.md",
+    "api": "jsdoc2md index.js API.md",
     "prepublish": "npm test && browserify index.js | uglifyjs > dist/polytone.min.js && ls -hall dist"
   },
   "repository": {
@@ -29,7 +29,9 @@
     "tape": "^4.5.1"
   },
   "dependencies": {
+    "audio-context": "^0.1.0",
+    "is-audio-buffer": "^1.0.1",
     "midimessage": "^1.0.5",
-    "note-parser": "^1.1.0"
+    "note-parser": "^2.0.0"
   }
 }
